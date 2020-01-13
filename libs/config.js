@@ -13,11 +13,17 @@ module.exports = function (sails, dir) {
     identity: false
   }, function (err, configs) {
     if (err) sails.log.error(err)
-    sails.config = _.merge(configs, sails.config, (a, b) => _.isArray(a) ? a.concat(b) : undefined)
-
-    // Using this hack to reset and bind our policies to router
-    sails._actionMiddleware = []
-    sails.router.flush()
+    sails.config = _.merge({},  sails.config, configs, (a, b) => _.isArray(a) ? a.concat(b) : undefined)    
+    let mapping = sails.hooks.policies.buildPolicyMap()
+    
+    for (let controllerName in configs.policies) {
+      var controller = controllerName.replace(/Controller$/,'').toLowerCase()
+      for (let actionName in configs.policies[controllerName]) {
+        const policies = configs.policies[controllerName][actionName]
+        const key = controller + '/' + actionName.toLowerCase()
+        sails.registerActionMiddleware(mapping[key], key)
+      }
+    }
   })
 }
 
