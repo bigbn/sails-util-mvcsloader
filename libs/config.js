@@ -24,6 +24,16 @@ module.exports = function (sails, dir) {
         sails.registerActionMiddleware(mapping[key], key)
       }
     }
+    
+    // There is still the issue with global false policy (*: False)
+    // Maybe this peaces somehow can help in future 
+    
+    // let wideKey = Object.keys(mapping).find((key) => key.startsWith('*'))
+    // let wideActions = mapping[wideKey]
+
+    // let existingWideKeys = Object.keys(sails._actionMiddleware).filter((key) => key.startsWith('*'))
+    // existingWideKeys.forEach(key => delete sails._actionMiddleware[wideKey])    
+    // sails.registerActionMiddleware(wideActions, wideKey);
   })
 }
 
