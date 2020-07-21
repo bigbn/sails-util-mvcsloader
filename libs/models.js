@@ -22,7 +22,9 @@ module.exports = function (sails, dir, cb) {
     }, (err, supplements) => {
       if (err) return cb(err)
       let finalModels = {...models, supplements} || {}
-      sails.models = {...finalModels, ...sails.models}
+      sails.hooks.orm.models = {...finalModels, ...sails.models}
+      sails.models = sails.hooks.orm.models
+      
       if (sails.config.globals.models === true) {
         for (let modelName in models) {
           let model = models[modelName]
